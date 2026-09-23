@@ -2,13 +2,21 @@ const express = require("express");
 const dotenv = require("dotenv");
 const sequelize = require("./config/database");
 const Course = require("./models/Course");
+const Category = require("./models/Category");
 const courseRoutes = require("./routes/courseRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 
 dotenv.config();
 const app = express();
-
 app.use(express.json());
+
+const models = { Course, Category };
+Object.values(models).forEach(model => {
+  if (model.associate) model.associate(models);
+});
+
 app.use("/api/courses", courseRoutes);
+app.use("/api/categories", categoryRoutes);
 
 sequelize.sync()
   .then(() => { console.log("Database synced successfully!"); })
